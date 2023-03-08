@@ -53,7 +53,6 @@ if __name__ == '__main__':
             t_loss.backward()
             optimizer.step()
             
-            # Print stats every 100 iterations
             if i % 200 == 0:
                 print("T_Epoch: [%d/%d], Step: [%d/%d], Loss: %.3f " % (epoch+1, setup.EPOCHS, i, len(train_loader), t_loss.item())) 
             
@@ -80,7 +79,6 @@ if __name__ == '__main__':
                 fake_images = generator.forward(logos).to(device)
                 v_loss = criterion_mse(fake_images, cleans)                
                 
-                # Print stats every 100 iterations
                 if i % 200 == 0:
                     print("V_Epoch: [%d/%d], Step: [%d/%d], Loss: %.3f " % (epoch+1, setup.EPOCHS, i, len(val_loader), v_loss.item())) 
                 
