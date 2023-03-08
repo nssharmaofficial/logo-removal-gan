@@ -12,19 +12,23 @@ if __name__ == '__main__':
     setup = Setup()
         
     train_logo_paths, val_logo_paths, train_clean_paths, val_clean_paths = get_paths()
-    val_dataset = No_Patch_Dataset(val_logo_paths, val_clean_paths)
+    val_dataset = Dataset(val_logo_paths, val_clean_paths, patches=False)
     val_loader = get_data_loader(val_dataset, batch_size=setup.BATCH_show)
 
     logos, cleans = next(iter(val_loader))
+    
+    if val_dataset.patches_bool:
+        logos = torch.cat(logos, dim=0)
+        cleans = torch.cat(cleans, dim=0)
         
     generator = Generator()
     generator.eval()
     
     try:
         if setup.AUTO == True:   
-            generator.load_state_dict(torch.load(f"checkpoints/AUTOG-B{setup.BATCH}-G-{setup.GLR}-E{setup.EPOCHS_model}.pt"))
+            generator.load_state_dict(torch.load(f"checkpoints/AUTOG-B{setup.BATCH}-G-{setup.GLR}-E{setup.EPOCHS}.pt"))
         else:   
-            generator.load_state_dict(torch.load(f"checkpoints/old/G-B{setup.BATCH}-G-{setup.GLR}-D-{setup.DLR}-{setup.LAMBDA}MSE-E{setup.EPOCHS_model}.pt"))
+            generator.load_state_dict(torch.load(f"checkpoints/G-B{setup.BATCH}-G-{setup.GLR}-D-{setup.DLR}-{setup.LAMBDA}MSE-E{setup.EPOCHS}.pt"))
             
         generated = generator.forward(logos)
         

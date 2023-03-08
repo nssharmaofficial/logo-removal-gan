@@ -13,14 +13,12 @@ class Setup(object):
         self.whole_size = (512,512)
         
         self.BATCH = 2
-        self.EPOCHS = 25
-        
+        self.EPOCHS = 15
         self.GLR = 1e-4
         self.DLR = 4e-4
         self.LAMBDA = 200
         
         self.AUTO = False
-        self.EPOCHS_model = 20
         self.BATCH_show = 10
 
 

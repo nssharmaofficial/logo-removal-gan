@@ -2,16 +2,14 @@ import matplotlib.pyplot as plt
 import torch
 import torch._utils
 import torch.nn as nn
-from dataset_file_patches import *
-from setup import * 
+from dataset import *
+from setup import *
 
 
 class Generator(nn.Module):
     def __init__(self, in_channels=3, out_channels=3, num_filters=64):
+        
         super(Generator, self).__init__()
-        
-        #self.device = device
-        
         self.down_conv1 = nn.Conv2d(in_channels, num_filters, kernel_size=4, stride=2, padding=1, bias=False)
         self.down_conv2 = nn.Conv2d(num_filters, num_filters*2, kernel_size=4, stride=2, padding=1, bias=False)
         self.down_conv3 = nn.Conv2d(num_filters*2, num_filters*4, kernel_size=4, stride=2, padding=1, bias=False)
@@ -83,10 +81,8 @@ class Generator(nn.Module):
 
 class Discriminator(nn.Module):
     def __init__(self):
+        
         super(Discriminator, self).__init__()
-        
-        #self.device = device#
-        
         self.conv1 = nn.Sequential(
             nn.Conv2d(3, 64, 4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True)
@@ -128,7 +124,7 @@ class Discriminator(nn.Module):
         #print('Conv5: ', x.size())
         x = self.conv5(x)
         #print('Conv5: ', x.size())
-        x = torch.mean(x, dim=[2,3]) # global average pooling
+        x = torch.mean(x, dim=[2,3]) 
         #print('Out: ', x.size())
         return x
 
@@ -139,29 +135,36 @@ if __name__ == '__main__':
     device = setup.DEVICE
 
     train_logo_paths, val_logo_paths, train_clean_paths, val_clean_paths = get_paths()
-    train_dataset = Patch_Dataset(train_logo_paths, train_clean_paths, patch_size= setup.patch_size, stride=1)
+    train_dataset = Dataset(train_logo_paths, train_clean_paths, patches=True)
     train_loader = get_data_loader(train_dataset, batch_size = setup.BATCH)
         
-    logos, cleans = next(iter(train_loader))  # logos, cleans = list of tensors with len = num_patches
-    logos_concatenated = torch.cat(logos, dim=0)
-    cleans_concatenated = torch.cat(cleans, dim=0)
+    logos, cleans = next(iter(train_loader))
+    if train_dataset.patches_bool:
+        num_patches = len(logos)
+        logos = torch.cat(logos, dim=0)
+        cleans = torch.cat(cleans, dim=0)
+    else:
+        num_patches = 1
     
     generator = Generator()
-    fake_images = generator.forward(logos_concatenated)
+    fake_images = generator.forward(logos)
 
     discriminator = Discriminator()
     output = discriminator.forward(fake_images)
-    output2 = discriminator.forward(cleans_concatenated)
+    output2 = discriminator.forward(cleans)
 
     
     # Print info
-    print('Logos size: ',logos_concatenated.size()) # logos_concatenated = (batch*num_patches, 3, 256, 256)
-    print('Fake images size: ',fake_images.size()) # (batch*num_patches, 3, 256, 256)
-    print('Discriminator output of generated size: ', output.size()) # (batch*num_patches, 1)
-    print('Discriminator output of cleans size: ', output2.size()) # (batch*num_patches, 1)
+    print('Batch size: ', setup.BATCH)
+    print('Number of patches for each image: ', num_patches)
+    print('Logos size: ',logos.size())                                      # (batch*num_patches, 3, 256, 256)
+    print('Fake images size: ',fake_images.size())                          # (batch*num_patches, 3, 256, 256)
+    print('Clean image size: ', cleans.size())                              # (batch*num_patches, 3, 256, 256)
+    print('Discriminator output of generated size: ', output.size())        # (batch*num_patches, 1)
+    print('Discriminator output of cleans size: ', output2.size())          # (batch*num_patches, 1)
     
     # Visualize
-    for logo, fake in zip(logos_concatenated, fake_images):
+    for logo, fake in zip(logos, fake_images):
         logo = denormalize(logo)
         fake = denormalize(fake)
         _, ax = plt.subplots(1,2, figsize=(20,10))

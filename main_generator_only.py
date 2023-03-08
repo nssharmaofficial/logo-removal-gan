@@ -2,7 +2,7 @@ import gc
 
 import torch
 import torch.utils.data
-from dataset_file_patches import *
+from dataset import *
 from matplotlib import pyplot as plt
 from model import *
 from setup import *
@@ -14,8 +14,8 @@ if __name__ == '__main__':
     
     print('Loading dataset...')
     train_logo_paths, val_logo_paths, train_clean_paths, val_clean_paths = get_paths()
-    train_dataset = Patch_Dataset(train_logo_paths, train_clean_paths, patch_size=setup.patch_size, stride=1)
-    val_dataset = Patch_Dataset(val_logo_paths, val_clean_paths, patch_size=setup.patch_size, stride=1)
+    train_dataset = Dataset(train_logo_paths, train_clean_paths, patches = True)
+    val_dataset = Dataset(val_logo_paths, val_clean_paths, patches = True)
     train_loader = get_data_loader(train_dataset, batch_size = setup.BATCH)
     val_loader = get_data_loader(val_dataset, batch_size = setup.BATCH)
 
@@ -35,8 +35,13 @@ if __name__ == '__main__':
             generator.train()
             
             logos, cleans = batch[0], batch[1]
-            logos = torch.cat(logos, dim=0).to(device)
-            cleans = torch.cat(cleans, dim=0).to(device)
+            
+            if train_dataset.patches_bool:
+                logos = torch.cat(logos, dim=0).to(device)
+                cleans = torch.cat(cleans, dim=0).to(device)
+            else:
+                logos = logos.to(device)
+                cleans = cleans.to(device)
             # logos, clenas : (BATCH*num_patches, 3, 256, 256) 
 
             t_loss = 0
@@ -61,8 +66,13 @@ if __name__ == '__main__':
             with torch.no_grad():
             
                 logos, cleans = batch[0], batch[1]
-                logos = torch.cat(logos, dim=0).to(device)
-                cleans = torch.cat(cleans, dim=0).to(device)
+                
+                if val_dataset.patches_bool:
+                    logos = torch.cat(logos, dim=0).to(device)
+                    cleans = torch.cat(cleans, dim=0).to(device)
+                else:
+                    logos = logos.to(device)
+                    cleans = cleans.to(device)
                 # logos, cleans : (BATCH*num_patches, 3, 256, 256) 
                 
                 v_loss = 0

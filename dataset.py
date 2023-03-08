@@ -37,17 +37,24 @@ def get_paths():
     return train_logo_paths, val_logo_paths, train_clean_paths, val_clean_paths
 
 
-class Patch_Dataset(data.Dataset):
+class Dataset(data.Dataset):
     
-    def __init__(self, logo_paths:list[str], clean_paths:list[str], patch_size=(256,256), stride=1):
+    def __init__(self, logo_paths:list[str], clean_paths:list[str], patches:bool):
         
-        self.patch_size = patch_size
-        self.stride = stride
+        setup = Setup()
+        self.patches_bool = patches
         
-        self.transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-        ])
+        if self.patches_bool:
+            self.transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+            ])
+        else:
+            self.transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(setup.whole_size),
+                transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+            ]) 
 
         self.clean_paths = clean_paths
         self.logo_paths = logo_paths
@@ -65,34 +72,46 @@ class Patch_Dataset(data.Dataset):
         logo_image = Image.open(logo_path).convert('RGB')
         clean_image = Image.open(clean_path).convert('RGB')
 
-        logo_patches = self._get_patches(logo_image)
-        clean_patches = self._get_patches(clean_image)
+        if self.patches_bool:
+            logo_patches = self._get_patches(logo_image)
+            clean_patches = self._get_patches(clean_image)
 
-        if self.transform:
-                    logo_patches = [self.transform(patch) for patch in logo_patches]
-                    clean_patches = [self.transform(patch) for patch in clean_patches]
+            if self.transform:
+                        logo_patches = [self.transform(patch) for patch in logo_patches]
+                        clean_patches = [self.transform(patch) for patch in clean_patches]
         
-        return logo_patches, clean_patches
+            return logo_patches, clean_patches
         
+        else:
+            logo_tensor = self.transform(logo_image)
+            clean_tensor = self.transform(clean_image)
+            
+            return logo_tensor, clean_tensor           
+            
 
+        
     def _get_patches(self, image):
+        
+        setup = Setup()
+        
         # Resize image to multiples of patch_size
         w, h = image.size
-        w_multiple = w // self.patch_size[0]
-        h_multiple = h // self.patch_size[1]
-        resize_size = (w_multiple * self.patch_size[0], h_multiple * self.patch_size[1])
+        w_multiple = w // setup.patch_size[0]
+        h_multiple = h // setup.patch_size[1]
+        resize_size = (w_multiple * setup.patch_size[0], h_multiple * setup.patch_size[1])
         image = image.resize(resize_size)
         
         # Extract patches from image
         patches = []
         for i in range(0, w_multiple):
             for j in range(0, h_multiple):
-                x = i * self.patch_size[0]
-                y = j * self.patch_size[1]
-                patch = image.crop((x, y, x + self.patch_size[0], y + self.patch_size[1]))
+                x = i * setup.patch_size[0]
+                y = j * setup.patch_size[1]
+                patch = image.crop((x, y, x + setup.patch_size[0], y + setup.patch_size[1]))
                 patches.append(patch)
                 
         return patches
+
 
 def denormalize(image: torch.Tensor):
     inv_normalize = transforms.Normalize(
@@ -102,7 +121,7 @@ def denormalize(image: torch.Tensor):
     return (inv_normalize(image) * 255.).type(torch.uint8).permute(1, 2, 0).numpy()
 
     
-def get_data_loader(dataset, batch_size=32):
+def get_data_loader(dataset:Dataset, batch_size:int):
     return DataLoader(
         dataset = dataset,
         batch_size = batch_size,
@@ -120,28 +139,34 @@ if __name__ == '__main__':
         print('Size of training set: ', len(train_logo_paths))
         print('Size of validation set: ', len(val_logo_paths))
         
-        train_dataset = Patch_Dataset(train_logo_paths, train_clean_paths, patch_size= setup.patch_size, stride=1)
+        train_dataset = Dataset(train_logo_paths, train_clean_paths, patches = True)
         train_loader = get_data_loader(train_dataset, batch_size= setup.BATCH_show)
         
         logos, cleans = next(iter(train_loader))
-        logos_concatenated = torch.cat(logos, dim=0)
-        cleans_concatenated = torch.cat(cleans, dim=0)
         
-        print('\nSize of logos after concatenation: {}  \
-               \nNumber of patches of one image: {}'.format(logos_concatenated.size(), len(logos)))
+        if train_dataset.patches_bool:
+            num_patches = len(logos)
+            logos = torch.cat(logos, dim=0)
+            cleans = torch.cat(cleans, dim=0)
+        else:
+            num_patches = 1
+            
+        print('\nSize of logos after concatenation: {}      \
+               \nNumber of patches for each image: {}        \
+               \nBatch size: {}'.format(logos.size(), num_patches, setup.BATCH_show))
 
         # logos_concatenated : [batch*patches, 3, 256, 256]
         # cleans_concatenated: [batch*patches, 3, 256, 256]
         # for patch_size = (256,256) --> 10 patches
         
-        for logo, clean in zip(logos_concatenated, cleans_concatenated):
+        for logo, clean in zip(logos, cleans):
             logo = denormalize(logo)
             clean = denormalize(clean)
 
             _, ax = plt.subplots(1,2, figsize=(20,10))
             ax[0].imshow(logo)
-            ax[0].title.set_text('With logo')
+            ax[0].title.set_text('Logo')
             ax[1].imshow(clean)
-            ax[1].title.set_text('Without logo (clean)')
+            ax[1].title.set_text('Clean')
             plt.show()
             plt.pause(1)
