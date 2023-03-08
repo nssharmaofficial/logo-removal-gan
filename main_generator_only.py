@@ -102,6 +102,6 @@ if __name__ == '__main__':
     plt.title('Autoencoder Training')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
-    plt.savefig(f"plots/AUTOG-B{setup.BATCH}-G-{setup.GLR}-E{setup.EPOCHS}.pt")
+    plt.savefig(f"plots/AUTOG-B{setup.BATCH}-G-{setup.GLR}-E{setup.EPOCHS}.jpg")
 
 
