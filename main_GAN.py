@@ -85,8 +85,6 @@ if __name__ == '__main__':
             g_loss.backward()
             g_optimizer.step()
     
-            
-            # Print stats every 100 iterations
             if i % 200 == 0:
                 print("T_Epoch: [%d/%d], Step: [%d/%d]  |  D_R: %.3f, D_F: %.3f |  G_MSE: %.3f, G_BCE: %.3f  |  D_avg_Loss: %.3f  G_avg_Loss: %.3f " \
                       % (epoch+1, setup.EPOCHS, i, len(train_loader),d_loss_real.item(), d_loss_fake.item() ,setup.LAMBDA*g_loss_mse.item(), g_loss_bce.item() , d_loss.item(), g_loss.item())) 
@@ -138,8 +136,6 @@ if __name__ == '__main__':
                 
                 g_loss = setup.LAMBDA*g_loss_mse + g_loss_bce
 
-                
-                # Print stats every 100 iterations
                 if i % 200 == 0:
                     print("V_Epoch: [%d/%d], Step: [%d/%d], D_avg_Loss: %.3f,  G_avg_Loss: %.3f " % (epoch+1, setup.EPOCHS, i, len(val_loader),d_loss.item(), g_loss.item())) 
                 
