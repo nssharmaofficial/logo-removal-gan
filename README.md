@@ -123,6 +123,8 @@ Run  ```model.py``` to perform one forward operations of both models and visuali
 
 ## Training
 
+Few of the models trained can be found [here](https://drive.google.com/drive/u/1/folders/1cOSs3fYkM9J2yIWk8yTKRFc7jgtGv5vK).
+
 There are two options:
 - generator only
 - GAN
