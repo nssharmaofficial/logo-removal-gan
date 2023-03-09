@@ -259,7 +259,7 @@ class Setup(object):
         # if patch = False in Dataset()
         self.whole_size = (512,512)
         
-        # training parameters for main,py
+        # training parameters for main.py
         # also parameters defining trained model for show.py
         self.BATCH = 3
         self.EPOCHS = 14
