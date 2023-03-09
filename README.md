@@ -259,7 +259,7 @@ class Setup(object):
         # if patch = False in Dataset()
         self.whole_size = (512,512)
         
-        # training parameters for main,py
+        # training parameters for main.py
         # also parameters defining trained model for show.py
         self.BATCH = 3
         self.EPOCHS = 14
@@ -277,7 +277,7 @@ class Setup(object):
 
 ## Remarks and final comments
 
-Training the models is highly sensitive on the hyperparameters. In most of the images, the logo is relatively small, therefore one has to be very careful when choosing the learning rates as well as the coefficient lambda to prevent the generator simply copying the whole input image as output (especially when splitting the image into multiple patches, resulting in having fewer images that actually have the logo in them). 
+Training the models is highly sensitive on the hyperparameters. In most of the images, the logo is relatively small, therefore one has to be very careful when choosing the learning rates as well as the coefficient lambda to prevent the generator from simply copying the whole input image as output (especially when splitting the image into multiple patches, resulting in having fewer images that actually have the logo in them). 
 
 Few of the models trained can be found [here](https://drive.google.com/drive/u/1/folders/1cOSs3fYkM9J2yIWk8yTKRFc7jgtGv5vK) (as the size was too much big to upload in the repository). All the models were trained on training dataset with patches of size ```(256, 256)```, resulting in 10 patches for each image. The visualized results in ```/tested_imgs``` were tested on validation dataset without patches with the images of size ```(512, 512)```. 
 
