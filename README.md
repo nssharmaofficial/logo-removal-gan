@@ -146,6 +146,12 @@ Run ```main_generator_only.py``` to train the network.
 Pattern for saving the generator model (after each epoch) is:
 ```python
 f"checkpoints/AUTOG-B{setup.BATCH}-G-{setup.GLR}-E{epoch+1}.pt"
+
+```
+```
+...
+>T_Epoch: [1/14], Step: [0/1046], Loss: 0.172
+...
 ```
 
 <br>
@@ -192,6 +198,13 @@ Run ```main_GAN.py``` to train the network.
 Pattern for saving the generator model (after each epoch) is:
 ```python
 f"checkpoints/G-B{setup.BATCH}-G-{setup.GLR}-D-{setup.DLR}-{setup.LAMBDA}MSE-E{epoch+1}.pt"
+```
+
+```
+...
+> T_Epoch: [2/17], Step: [1000/1046]  |  D_R: 0.750, D_F: 0.621 |  G_MSE: 0.258, G_BCE: 0.762  |  D_avg_Loss: 0.686  G_avg_Loss: 1.020 
+> V_Epoch: [2/17], Step: [0/449], D_avg_Loss: 0.697,  G_avg_Loss: 1.539 
+...
 ```
 
 <br>
@@ -269,6 +282,9 @@ Few of the models trained can be found [here](https://drive.google.com/drive/u/1
 I believe better results can be obtained by further exploring different variations of the parameters. 
 
 The approach of calculating the losses (especially adding the parameter lambda for the generator's loss) was inspired by the [pix2pix model](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).
+
+
+
 
 
 
