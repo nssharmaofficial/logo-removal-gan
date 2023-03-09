@@ -105,7 +105,7 @@ There are two options:
 
 The generator is trained to transform input *logo* images into output *generated* images that are compared with *clean* images by the ```nn.MSELoss()``` criterion. This loss allows the network to minimize image distortion and at the same time reduce the noise, i.e. watermark within the image.
 
-As the image is processed from one layer to another it is also compressed in size. This allows the encoder network to extract most significant and desirable visual features from the image. As the encoder's capacity decreases it learns to disregard certain features and compress others. The decoder will then do the work backwards by rebuilding the image to its initial state without having the logo, by learning how to reconstruct the original image from the output of the encoder. The goal is to  eliminate the ogo from the image while maintaining original quality.
+As the image is processed from one layer to another it is also compressed in size. This allows the encoder network to extract most significant features from the image. As the encoder's capacity decreases it learns to disregard certain features and compress others. The decoder will then do the work backwards by rebuilding the image to its initial state without having the logo while maintaining the quality of the image. 
 
 <br>
 
