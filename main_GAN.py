@@ -105,8 +105,8 @@ if __name__ == '__main__':
                 logos, cleans = batch[0], batch[1]
                 
                 if val_dataset.patches_bool:
-                    logos = torch.cat(logos, dim=0)
-                    cleans = torch.cat(cleans, dim=0)
+                    logos = torch.cat(logos, dim=0).to(device)
+                    cleans = torch.cat(cleans, dim=0).to(device)
                 else:
                     logos = logos.to(device)
                     cleans = cleans.to(device)
