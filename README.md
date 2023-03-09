@@ -215,7 +215,7 @@ Run ```show.py``` to visualize the results.
 
 <br>
 
-Examples tested on model: ```AUTOG-B5-G-0.00015-E20.pt```:
+Examples tested on model: ```AUTOG-B5-G-0.00015-E20.pt``` (observed ratio 3 good: 1 bad):
 
 ![Examples](./tested_imgs/autogood1.png) 
 ![Examples](./tested_imgs/autogood2.png) 
@@ -223,7 +223,7 @@ Examples tested on model: ```AUTOG-B5-G-0.00015-E20.pt```:
 
 <br>
 
-Examples tested on model: ```G-B4-G-0.0002-D-0.0003-50MSE-E20.pt```:
+Examples tested on model: ```G-B4-G-0.0002-D-0.0003-50MSE-E20.pt``` (observed ratio 3 good: 1 bad):
 
 ![Examples](./tested_imgs/good1.png) 
 ![Examples](./tested_imgs/good2.png) 
