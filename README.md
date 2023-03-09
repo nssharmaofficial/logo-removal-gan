@@ -32,6 +32,17 @@ When called, each pair of images  ```logo```, ```clean``` is normalized and retu
 
 Run  ```dataset.py```  to load first iteration of dataloader and visualize the ```logo``` and ```clean``` images as well as to understand how the batch size and the number of patches change the dimension of returned tensors.
 
+![Examples](./readme_imgs/dataset.png)
+
+```
+> Size of training set:  3138
+> Size of validation set:  1345
+
+> Size of logos after concatenation: torch.Size([100, 3, 256, 256])
+> Number of patches for each image: 10
+> Batch size: 10
+```
+
 <br>
 
 ## Model 
@@ -92,7 +103,21 @@ Conv5:  torch.Size([20, 1, 13, 13])
 Out:  torch.Size([20, 1])
 ```
 
+<br>
+
 Run  ```model.py``` to perform one forward operations of both models and visualize input and output of the generator net.
+
+![Examples](./readme_imgs/model.png)
+
+```
+> Batch size:  3
+> Number of patches for each image:  10
+> Logos size:  torch.Size([30, 3, 256, 256])
+> Fake images size:  torch.Size([30, 3, 256, 256])
+> Clean image size:  torch.Size([30, 3, 256, 256])
+> Discriminator output of generated size:  torch.Size([30, 1])
+> Discriminator output of cleans size:  torch.Size([30, 1])
+```
 
 <br>
 
