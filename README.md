@@ -168,7 +168,7 @@ f"checkpoints/G-B{setup.BATCH}-G-{setup.GLR}-D-{setup.DLR}-{setup.LAMBDA}MSE-E{e
 
 <br>
 
-### Results
+## Results
 
 Run ```show.py``` to visualize the results. 
 
