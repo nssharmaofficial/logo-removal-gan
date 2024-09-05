@@ -1,4 +1,4 @@
-# TV- channel logo removal
+# TV- channel logo removal using GAN
 
 The goal of the assignment is to create a neural network capable of removing TV channel logo from the input image.
 
